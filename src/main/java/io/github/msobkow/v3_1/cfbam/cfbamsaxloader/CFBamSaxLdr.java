@@ -363,7 +363,7 @@ public class CFBamSaxLdr
 				getSecUserObj();
 				secSessionObj = schema.getSecSessionTableObj().newInstance();
 				ICFSecSecSessionEditObj sessionEdit = secSessionObj.beginEdit();
-				sessionEdit.setRequiredContainerSecUser( secUserObj );
+				sessionEdit.setRequiredSecUserId( secUserObj.getPKey() );
 				sessionEdit.setRequiredStart( LocalDateTime.now() );
 				sessionEdit.setOptionalFinish( null );
 				secSessionObj = sessionEdit.create();

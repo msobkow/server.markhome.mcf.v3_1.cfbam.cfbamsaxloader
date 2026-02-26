@@ -1184,7 +1184,6 @@ public class CFBamSaxLoader
 		if( secUserHandler == null ) {
 			secUserHandler = new CFBamSaxLoaderSecUser( this );
 			secUserHandler.addElementHandler( "SecDevice", getSecDeviceHandler() );
-			secUserHandler.addElementHandler( "SecSession", getSecSessionHandler() );
 		}
 		return( secUserHandler );
 	}
@@ -1654,6 +1653,7 @@ public class CFBamSaxLoader
 			saxDocHandler.addElementHandler( "ISOLang", getISOLangHandler() );
 			saxDocHandler.addElementHandler( "ISOTZone", getISOTZoneHandler() );
 			saxDocHandler.addElementHandler( "MimeType", getMimeTypeHandler() );
+			saxDocHandler.addElementHandler( "SecSession", getSecSessionHandler() );
 			saxDocHandler.addElementHandler( "SecUser", getSecUserHandler() );
 			saxDocHandler.addElementHandler( "ServiceType", getServiceTypeHandler() );
 			saxDocHandler.addElementHandler( "URLProtocol", getURLProtocolHandler() );
