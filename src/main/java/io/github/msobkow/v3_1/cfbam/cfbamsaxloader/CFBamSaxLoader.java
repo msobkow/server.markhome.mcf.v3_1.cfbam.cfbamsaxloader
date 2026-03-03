@@ -64,16 +64,16 @@ public class CFBamSaxLoader
 {
 
 	// The namespace URI of the supported schema
-	public final static String	SCHEMA_XMLNS = "http://server.markhome.mcf/mcf/xsd/v3_1/cfbam-structured.xsd";
+	public final static String	SCHEMA_XMLNS = "http://msobkow.github.io/msobkow/xsd/v3_1/cfbam-structured.xsd";
 
 	// The source for loading the supported schema
 	public final static String	SCHEMA_URI = "/opt/msobkow/3.0.1/xsd/cfbam-structured.xsd";
 	public final static String	SCHEMA_ROOT_URI = "/xsd/cfbam-structured.xsd";
-	public final static String CFSEC_XMLNS = "http://server.markhome.mcf/mcf/xsd/v3_1/cfsec-structured.xsd";
+	public final static String CFSEC_XMLNS = "http://msobkow.github.io/msobkow/xsd/v3_1/cfsec-structured.xsd";
 	public final static String CFSEC_URI = "/opt/msobkow/3.0.1/xsd/cfsec-structured.xsd";
 	public final static String CFSEC_ROOT_URI = "/xsd/cfsec-structured.xsd";
 
-	public final static String CFINT_XMLNS = "http://server.markhome.mcf/mcf/xsd/v3_1/cfint-structured.xsd";
+	public final static String CFINT_XMLNS = "http://msobkow.github.io/msobkow/xsd/v3_1/cfint-structured.xsd";
 	public final static String CFINT_URI = "/opt/msobkow/3.0.1/xsd/cfint-structured.xsd";
 	public final static String CFINT_ROOT_URI = "/xsd/cfint-structured.xsd";
 
