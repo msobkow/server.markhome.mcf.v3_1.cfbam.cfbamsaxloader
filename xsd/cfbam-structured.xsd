@@ -260,6 +260,9 @@
 		<xsd:enumeration value="System"/>
 		<xsd:enumeration value="Cluster"/>
 		<xsd:enumeration value="Tenant"/>
+		<xsd:enumeration value="SystemGroup"/>
+		<xsd:enumeration value="ClusterGroup"/>
+		<xsd:enumeration value="TenantGroup"/>
 	</xsd:restriction>
 </xsd:simpleType>
 
