@@ -1,5 +1,5 @@
 
-// Description: Java 25 XML SAX Element Handler for HostNode
+// Description: Java 25 XML SAX Element Handler for SecUserPassword
 
 /*
  *	server.markhome.mcf.CFBam
@@ -65,13 +65,13 @@ import server.markhome.mcf.v3_1.cfint.cfintobj.*;
 import server.markhome.mcf.v3_1.cfbam.cfbamobj.*;
 
 /*
- *	CFBamSaxLoaderHostNodeParse XML SAX Element Handler implementation
- *	for HostNode.
+ *	CFBamSaxLoaderSecUserPasswordParse XML SAX Element Handler implementation
+ *	for SecUserPassword.
  */
-public class CFBamSaxLoaderHostNode
+public class CFBamSaxLoaderSecUserPassword
 	extends CFLibXmlCoreElementHandler
 {
-	public CFBamSaxLoaderHostNode( CFBamSaxLoader saxLoader ) {
+	public CFBamSaxLoaderSecUserPassword( CFBamSaxLoader saxLoader ) {
 		super( saxLoader );
 	}
 
@@ -83,22 +83,21 @@ public class CFBamSaxLoaderHostNode
 	throws SAXException
 	{
 		final String S_ProcName = "startElement";
-		ICFBamHostNodeObj origBuff = null;
-		ICFBamHostNodeEditObj editBuff = null;
+		ICFBamSecUserPasswordObj origBuff = null;
+		ICFBamSecUserPasswordEditObj editBuff = null;
 		// Common XML Attributes
 		String attrId = null;
-		// HostNode Attributes
-		String attrDescription = null;
-		String attrHostName = null;
-		// HostNode References
-		ICFBamClusterObj refCluster = null;
+		// SecUserPassword Attributes
+		String attrPWSetStamp = null;
+		String attrPasswordHash = null;
+		// SecUserPassword References
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
 		int idxAttr;
 		final String S_LocalName = "LocalName";
 		try {
-			assert qName.equals( "HostNode" );
+			assert qName.equals( "SecUserPassword" );
 
 			CFBamSaxLoader saxLoader = (CFBamSaxLoader)getParser();
 			if( saxLoader == null ) {
@@ -117,8 +116,8 @@ public class CFBamSaxLoaderHostNode
 			}
 
 			// Instantiate an edit buffer for the parsed information
-			origBuff = (ICFBamHostNodeObj)schemaObj.getHostNodeTableObj().newInstance();
-			editBuff = (ICFBamHostNodeEditObj)origBuff.beginEdit();
+			origBuff = (ICFBamSecUserPasswordObj)schemaObj.getSecUserPasswordTableObj().newInstance();
+			editBuff = (ICFBamSecUserPasswordEditObj)origBuff.beginEdit();
 
 			// Extract Attributes
 			numAttrs = attrs.getLength();
@@ -133,23 +132,23 @@ public class CFBamSaxLoaderHostNode
 					}
 					attrId = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "Description" ) ) {
-					if( attrDescription != null ) {
+				else if( attrLocalName.equals( "PWSetStamp" ) ) {
+					if( attrPWSetStamp != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
 							S_ProcName,
 							S_LocalName,
 							attrLocalName );
 					}
-					attrDescription = attrs.getValue( idxAttr );
+					attrPWSetStamp = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "HostName" ) ) {
-					if( attrHostName != null ) {
+				else if( attrLocalName.equals( "PasswordHash" ) ) {
+					if( attrPasswordHash != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
 							S_ProcName,
 							S_LocalName,
 							attrLocalName );
 					}
-					attrHostName = attrs.getValue( idxAttr );
+					attrPasswordHash = attrs.getValue( idxAttr );
 				}
 				else if( attrLocalName.equals( "schemaLocation" ) ) {
 					// ignored
@@ -163,24 +162,24 @@ public class CFBamSaxLoaderHostNode
 			}
 
 			// Ensure that required attributes have values
-			if( attrDescription == null ) {
+			if( ( attrPWSetStamp == null ) || ( attrPWSetStamp.length() <= 0 ) ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
 					0,
-					"Description" );
+					"PWSetStamp" );
 			}
-			if( attrHostName == null ) {
+			if( attrPasswordHash == null ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
 					0,
-					"HostName" );
+					"PasswordHash" );
 			}
 
 			// Save named attributes to context
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
-			curContext.putNamedValue( "Description", attrDescription );
-			curContext.putNamedValue( "HostName", attrHostName );
+			curContext.putNamedValue( "PWSetStamp", attrPWSetStamp );
+			curContext.putNamedValue( "PasswordHash", attrPasswordHash );
 
 			// Convert string attributes to native Java types
 			// and apply the converted attributes to the editBuff.
@@ -192,11 +191,21 @@ public class CFBamSaxLoaderHostNode
 			else {
 				natId = null;
 			}
-			String natDescription = attrDescription;
-			editBuff.setRequiredDescription( natDescription );
+			LocalDateTime natPWSetStamp;
+			try {
+				natPWSetStamp = CFLibXmlUtil.parseTimestamp( attrPWSetStamp );
+			}
+			catch( RuntimeException e ) {
+				throw new CFLibInvalidArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"PWSetStamp",
+					e );
+			}
+			editBuff.setRequiredPWSetStamp( natPWSetStamp );
 
-			String natHostName = attrHostName;
-			editBuff.setRequiredHostName( natHostName );
+			String natPasswordHash = attrPasswordHash;
+			editBuff.setRequiredPasswordHash( natPasswordHash );
 
 			// Get the scope/container object
 
@@ -209,63 +218,12 @@ public class CFBamSaxLoaderHostNode
 				scopeObj = null;
 			}
 
-			// Resolve and apply required Container reference
+			ICFBamSecUserPasswordObj origSecUserPassword;
+			ICFBamSecUserPasswordEditObj editSecUserPassword = editBuff;
+			origSecUserPassword = (ICFBamSecUserPasswordObj)editSecUserPassword.create();
+			editSecUserPassword = null;
 
-			if( scopeObj == null ) {
-				throw new CFLibNullArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"scopeObj" );
-			}
-			else if( scopeObj instanceof ICFBamClusterObj ) {
-				refCluster = (ICFBamClusterObj) scopeObj;
-				editBuff.setRequiredContainerCluster( refCluster );
-			}
-			else {
-				throw new CFLibUnsupportedClassException( getClass(),
-					S_ProcName,
-					"scopeObj",
-					scopeObj,
-					"ICFBamClusterObj" );
-			}
-
-			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getHostNodeLoaderBehaviour();
-			ICFBamHostNodeEditObj editHostNode = null;
-			ICFBamHostNodeObj origHostNode = (ICFBamHostNodeObj)schemaObj.getHostNodeTableObj().readHostNodeByHostNameIdx( refCluster.getRequiredId(),
-			editBuff.getRequiredHostName() );
-			if( origHostNode == null ) {
-				editHostNode = editBuff;
-			}
-			else {
-				switch( loaderBehaviour ) {
-					case Insert:
-						break;
-					case Update:
-						editHostNode = (ICFBamHostNodeEditObj)origHostNode.beginEdit();
-						editHostNode.setRequiredDescription( editBuff.getRequiredDescription() );
-						editHostNode.setRequiredHostName( editBuff.getRequiredHostName() );
-						break;
-					case Replace:
-						editHostNode = (ICFBamHostNodeEditObj)origHostNode.beginEdit();
-						editHostNode.deleteInstance();
-						editHostNode = null;
-						origHostNode = null;
-						editHostNode = editBuff;
-						break;
-				}
-			}
-
-			if( editHostNode != null ) {
-				if( origHostNode != null ) {
-					editHostNode.update();
-				}
-				else {
-					origHostNode = (ICFBamHostNodeObj)editHostNode.create();
-				}
-				editHostNode = null;
-			}
-
-			curContext.putNamedValue( "Object", origHostNode );
+			curContext.putNamedValue( "Object", origSecUserPassword );
 		}
 		catch( RuntimeException e ) {
 			throw new SAXException( "Near " + getParser().getLocationInfo() + ": Caught and rethrew " + e.getClass().getName() + " - " + e.getMessage(),

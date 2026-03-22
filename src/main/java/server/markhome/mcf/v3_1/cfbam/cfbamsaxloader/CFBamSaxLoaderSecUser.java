@@ -89,13 +89,14 @@ public class CFBamSaxLoaderSecUser
 		String attrId = null;
 		// SecUser Attributes
 		String attrLoginId = null;
+		String attrDfltSysGrpName = null;
+		String attrDfltClusGrpName = null;
+		String attrDfltTentGrpName = null;
 		String attrEMailAddress = null;
 		String attrEMailConfirmUuid6 = null;
 		String attrPasswordHash = null;
 		String attrPasswordResetUuid6 = null;
-		String attrDefDev = null;
 		// SecUser References
-		ICFBamSecDeviceObj refDefDev = null;
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
@@ -146,6 +147,33 @@ public class CFBamSaxLoaderSecUser
 					}
 					attrLoginId = attrs.getValue( idxAttr );
 				}
+				else if( attrLocalName.equals( "DfltSysGrpName" ) ) {
+					if( attrDfltSysGrpName != null ) {
+						throw new CFLibUniqueIndexViolationException( getClass(),
+							S_ProcName,
+							S_LocalName,
+							attrLocalName );
+					}
+					attrDfltSysGrpName = attrs.getValue( idxAttr );
+				}
+				else if( attrLocalName.equals( "DfltClusGrpName" ) ) {
+					if( attrDfltClusGrpName != null ) {
+						throw new CFLibUniqueIndexViolationException( getClass(),
+							S_ProcName,
+							S_LocalName,
+							attrLocalName );
+					}
+					attrDfltClusGrpName = attrs.getValue( idxAttr );
+				}
+				else if( attrLocalName.equals( "DfltTentGrpName" ) ) {
+					if( attrDfltTentGrpName != null ) {
+						throw new CFLibUniqueIndexViolationException( getClass(),
+							S_ProcName,
+							S_LocalName,
+							attrLocalName );
+					}
+					attrDfltTentGrpName = attrs.getValue( idxAttr );
+				}
 				else if( attrLocalName.equals( "EMailAddress" ) ) {
 					if( attrEMailAddress != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
@@ -182,15 +210,6 @@ public class CFBamSaxLoaderSecUser
 					}
 					attrPasswordResetUuid6 = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "DefDev" ) ) {
-					if( attrDefDev != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrDefDev = attrs.getValue( idxAttr );
-				}
 				else if( attrLocalName.equals( "schemaLocation" ) ) {
 					// ignored
 				}
@@ -209,6 +228,24 @@ public class CFBamSaxLoaderSecUser
 					0,
 					"LoginId" );
 			}
+			if( attrDfltSysGrpName == null ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"DfltSysGrpName" );
+			}
+			if( attrDfltClusGrpName == null ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"DfltClusGrpName" );
+			}
+			if( attrDfltTentGrpName == null ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"DfltTentGrpName" );
+			}
 			if( attrEMailAddress == null ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
@@ -226,11 +263,13 @@ public class CFBamSaxLoaderSecUser
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
 			curContext.putNamedValue( "LoginId", attrLoginId );
+			curContext.putNamedValue( "DfltSysGrpName", attrDfltSysGrpName );
+			curContext.putNamedValue( "DfltClusGrpName", attrDfltClusGrpName );
+			curContext.putNamedValue( "DfltTentGrpName", attrDfltTentGrpName );
 			curContext.putNamedValue( "EMailAddress", attrEMailAddress );
 			curContext.putNamedValue( "EMailConfirmUuid6", attrEMailConfirmUuid6 );
 			curContext.putNamedValue( "PasswordHash", attrPasswordHash );
 			curContext.putNamedValue( "PasswordResetUuid6", attrPasswordResetUuid6 );
-			curContext.putNamedValue( "DefDev", attrDefDev );
 
 			// Convert string attributes to native Java types
 			// and apply the converted attributes to the editBuff.
@@ -244,6 +283,15 @@ public class CFBamSaxLoaderSecUser
 			}
 			String natLoginId = attrLoginId;
 			editBuff.setRequiredLoginId( natLoginId );
+
+			String natDfltSysGrpName = attrDfltSysGrpName;
+			editBuff.setRequiredDfltSysGrpName( natDfltSysGrpName );
+
+			String natDfltClusGrpName = attrDfltClusGrpName;
+			editBuff.setRequiredDfltClusGrpName( natDfltClusGrpName );
+
+			String natDfltTentGrpName = attrDfltTentGrpName;
+			editBuff.setRequiredDfltTentGrpName( natDfltTentGrpName );
 
 			String natEMailAddress = attrEMailAddress;
 			editBuff.setRequiredEMailAddress( natEMailAddress );
@@ -298,22 +346,6 @@ public class CFBamSaxLoaderSecUser
 				scopeObj = null;
 			}
 
-			// Lookup refDefDev by key name value attr
-			if( ( attrDefDev != null ) && ( attrDefDev.length() > 0 ) ) {
-				refDefDev = (ICFBamSecDeviceObj)schemaObj.getSecDeviceTableObj().readSecDeviceByNameIdx( editBuff.getOptionalDfltDevUserId(),
-				attrDefDev );
-				if( refDefDev == null ) {
-					throw new CFLibNullArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"Resolve DefDev reference named \"" + attrDefDev + "\" to table SecDevice" );
-				}
-			}
-			else {
-				refDefDev = null;
-			}
-			editBuff.setOptionalLookupDefDev( refDefDev );
-
 			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecUserLoaderBehaviour();
 			ICFBamSecUserEditObj editSecUser = null;
 			ICFBamSecUserObj origSecUser = (ICFBamSecUserObj)schemaObj.getSecUserTableObj().readSecUserByULoginIdx( editBuff.getRequiredLoginId() );
@@ -327,11 +359,13 @@ public class CFBamSaxLoaderSecUser
 					case Update:
 						editSecUser = (ICFBamSecUserEditObj)origSecUser.beginEdit();
 						editSecUser.setRequiredLoginId( editBuff.getRequiredLoginId() );
+						editSecUser.setRequiredDfltSysGrpName( editBuff.getRequiredDfltSysGrpName() );
+						editSecUser.setRequiredDfltClusGrpName( editBuff.getRequiredDfltClusGrpName() );
+						editSecUser.setRequiredDfltTentGrpName( editBuff.getRequiredDfltTentGrpName() );
 						editSecUser.setRequiredEMailAddress( editBuff.getRequiredEMailAddress() );
 						editSecUser.setOptionalEMailConfirmUuid6( editBuff.getOptionalEMailConfirmUuid6() );
 						editSecUser.setRequiredPasswordHash( editBuff.getRequiredPasswordHash() );
 						editSecUser.setOptionalPasswordResetUuid6( editBuff.getOptionalPasswordResetUuid6() );
-						editSecUser.setOptionalLookupDefDev( editBuff.getOptionalLookupDefDev() );
 						break;
 					case Replace:
 						editSecUser = (ICFBamSecUserEditObj)origSecUser.beginEdit();

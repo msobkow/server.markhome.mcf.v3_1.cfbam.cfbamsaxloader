@@ -1,5 +1,5 @@
 
-// Description: Java 25 XML SAX Element Handler for ServiceType
+// Description: Java 25 XML SAX Element Handler for SecSysGrp
 
 /*
  *	server.markhome.mcf.CFBam
@@ -65,13 +65,13 @@ import server.markhome.mcf.v3_1.cfint.cfintobj.*;
 import server.markhome.mcf.v3_1.cfbam.cfbamobj.*;
 
 /*
- *	CFBamSaxLoaderServiceTypeParse XML SAX Element Handler implementation
- *	for ServiceType.
+ *	CFBamSaxLoaderSecSysGrpParse XML SAX Element Handler implementation
+ *	for SecSysGrp.
  */
-public class CFBamSaxLoaderServiceType
+public class CFBamSaxLoaderSecSysGrp
 	extends CFLibXmlCoreElementHandler
 {
-	public CFBamSaxLoaderServiceType( CFBamSaxLoader saxLoader ) {
+	public CFBamSaxLoaderSecSysGrp( CFBamSaxLoader saxLoader ) {
 		super( saxLoader );
 	}
 
@@ -83,20 +83,21 @@ public class CFBamSaxLoaderServiceType
 	throws SAXException
 	{
 		final String S_ProcName = "startElement";
-		ICFBamServiceTypeObj origBuff = null;
-		ICFBamServiceTypeEditObj editBuff = null;
+		ICFBamSecSysGrpObj origBuff = null;
+		ICFBamSecSysGrpEditObj editBuff = null;
 		// Common XML Attributes
 		String attrId = null;
-		// ServiceType Attributes
-		String attrDescription = null;
-		// ServiceType References
+		// SecSysGrp Attributes
+		String attrName = null;
+		String attrSecLevel = null;
+		// SecSysGrp References
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
 		int idxAttr;
 		final String S_LocalName = "LocalName";
 		try {
-			assert qName.equals( "ServiceType" );
+			assert qName.equals( "SecSysGrp" );
 
 			CFBamSaxLoader saxLoader = (CFBamSaxLoader)getParser();
 			if( saxLoader == null ) {
@@ -115,8 +116,8 @@ public class CFBamSaxLoaderServiceType
 			}
 
 			// Instantiate an edit buffer for the parsed information
-			origBuff = (ICFBamServiceTypeObj)schemaObj.getServiceTypeTableObj().newInstance();
-			editBuff = (ICFBamServiceTypeEditObj)origBuff.beginEdit();
+			origBuff = (ICFBamSecSysGrpObj)schemaObj.getSecSysGrpTableObj().newInstance();
+			editBuff = (ICFBamSecSysGrpEditObj)origBuff.beginEdit();
 
 			// Extract Attributes
 			numAttrs = attrs.getLength();
@@ -131,14 +132,23 @@ public class CFBamSaxLoaderServiceType
 					}
 					attrId = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "Description" ) ) {
-					if( attrDescription != null ) {
+				else if( attrLocalName.equals( "Name" ) ) {
+					if( attrName != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
 							S_ProcName,
 							S_LocalName,
 							attrLocalName );
 					}
-					attrDescription = attrs.getValue( idxAttr );
+					attrName = attrs.getValue( idxAttr );
+				}
+				else if( attrLocalName.equals( "SecLevel" ) ) {
+					if( attrSecLevel != null ) {
+						throw new CFLibUniqueIndexViolationException( getClass(),
+							S_ProcName,
+							S_LocalName,
+							attrLocalName );
+					}
+					attrSecLevel = attrs.getValue( idxAttr );
 				}
 				else if( attrLocalName.equals( "schemaLocation" ) ) {
 					// ignored
@@ -152,17 +162,24 @@ public class CFBamSaxLoaderServiceType
 			}
 
 			// Ensure that required attributes have values
-			if( attrDescription == null ) {
+			if( attrName == null ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
 					0,
-					"Description" );
+					"Name" );
+			}
+			if( ( attrSecLevel == null ) || ( attrSecLevel.length() <= 0 ) ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"SecLevel" );
 			}
 
 			// Save named attributes to context
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
-			curContext.putNamedValue( "Description", attrDescription );
+			curContext.putNamedValue( "Name", attrName );
+			curContext.putNamedValue( "SecLevel", attrSecLevel );
 
 			// Convert string attributes to native Java types
 			// and apply the converted attributes to the editBuff.
@@ -174,8 +191,11 @@ public class CFBamSaxLoaderServiceType
 			else {
 				natId = null;
 			}
-			String natDescription = attrDescription;
-			editBuff.setRequiredDescription( natDescription );
+			String natName = attrName;
+			editBuff.setRequiredName( natName );
+
+			ICFSecSchema.SecLevelEnum natSecLevel = ICFSecSchema.parseSecLevelEnum( attrSecLevel );
+			editBuff.setRequiredSecLevel( natSecLevel );
 
 			// Get the scope/container object
 
@@ -188,41 +208,42 @@ public class CFBamSaxLoaderServiceType
 				scopeObj = null;
 			}
 
-			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getServiceTypeLoaderBehaviour();
-			ICFBamServiceTypeEditObj editServiceType = null;
-			ICFBamServiceTypeObj origServiceType = (ICFBamServiceTypeObj)schemaObj.getServiceTypeTableObj().readServiceTypeByUDescrIdx( editBuff.getRequiredDescription() );
-			if( origServiceType == null ) {
-				editServiceType = editBuff;
+			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecSysGrpLoaderBehaviour();
+			ICFBamSecSysGrpEditObj editSecSysGrp = null;
+			ICFBamSecSysGrpObj origSecSysGrp = (ICFBamSecSysGrpObj)schemaObj.getSecSysGrpTableObj().readSecSysGrpByUNameIdx( editBuff.getRequiredName() );
+			if( origSecSysGrp == null ) {
+				editSecSysGrp = editBuff;
 			}
 			else {
 				switch( loaderBehaviour ) {
 					case Insert:
 						break;
 					case Update:
-						editServiceType = (ICFBamServiceTypeEditObj)origServiceType.beginEdit();
-						editServiceType.setRequiredDescription( editBuff.getRequiredDescription() );
+						editSecSysGrp = (ICFBamSecSysGrpEditObj)origSecSysGrp.beginEdit();
+						editSecSysGrp.setRequiredName( editBuff.getRequiredName() );
+						editSecSysGrp.setRequiredSecLevel( editBuff.getRequiredSecLevel() );
 						break;
 					case Replace:
-						editServiceType = (ICFBamServiceTypeEditObj)origServiceType.beginEdit();
-						editServiceType.deleteInstance();
-						editServiceType = null;
-						origServiceType = null;
-						editServiceType = editBuff;
+						editSecSysGrp = (ICFBamSecSysGrpEditObj)origSecSysGrp.beginEdit();
+						editSecSysGrp.deleteInstance();
+						editSecSysGrp = null;
+						origSecSysGrp = null;
+						editSecSysGrp = editBuff;
 						break;
 				}
 			}
 
-			if( editServiceType != null ) {
-				if( origServiceType != null ) {
-					editServiceType.update();
+			if( editSecSysGrp != null ) {
+				if( origSecSysGrp != null ) {
+					editSecSysGrp.update();
 				}
 				else {
-					origServiceType = (ICFBamServiceTypeObj)editServiceType.create();
+					origSecSysGrp = (ICFBamSecSysGrpObj)editSecSysGrp.create();
 				}
-				editServiceType = null;
+				editSecSysGrp = null;
 			}
 
-			curContext.putNamedValue( "Object", origServiceType );
+			curContext.putNamedValue( "Object", origSecSysGrp );
 		}
 		catch( RuntimeException e ) {
 			throw new SAXException( "Near " + getParser().getLocationInfo() + ": Caught and rethrew " + e.getClass().getName() + " - " + e.getMessage(),

@@ -1,5 +1,5 @@
 
-// Description: Java 25 XML SAX Element Handler for SecDevice
+// Description: Java 25 XML SAX Element Handler for SecTentGrpMemb
 
 /*
  *	server.markhome.mcf.CFBam
@@ -65,13 +65,13 @@ import server.markhome.mcf.v3_1.cfint.cfintobj.*;
 import server.markhome.mcf.v3_1.cfbam.cfbamobj.*;
 
 /*
- *	CFBamSaxLoaderSecDeviceParse XML SAX Element Handler implementation
- *	for SecDevice.
+ *	CFBamSaxLoaderSecTentGrpMembParse XML SAX Element Handler implementation
+ *	for SecTentGrpMemb.
  */
-public class CFBamSaxLoaderSecDevice
+public class CFBamSaxLoaderSecTentGrpMemb
 	extends CFLibXmlCoreElementHandler
 {
-	public CFBamSaxLoaderSecDevice( CFBamSaxLoader saxLoader ) {
+	public CFBamSaxLoaderSecTentGrpMemb( CFBamSaxLoader saxLoader ) {
 		super( saxLoader );
 	}
 
@@ -83,20 +83,19 @@ public class CFBamSaxLoaderSecDevice
 	throws SAXException
 	{
 		final String S_ProcName = "startElement";
-		ICFBamSecDeviceObj origBuff = null;
-		ICFBamSecDeviceEditObj editBuff = null;
+		ICFBamSecTentGrpMembObj origBuff = null;
+		ICFBamSecTentGrpMembEditObj editBuff = null;
 		// Common XML Attributes
 		String attrId = null;
-		// SecDevice Attributes
-		// SecDevice References
-		ICFBamSecUserObj refSecUser = null;
+		// SecTentGrpMemb Attributes
+		// SecTentGrpMemb References
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
 		int idxAttr;
 		final String S_LocalName = "LocalName";
 		try {
-			assert qName.equals( "SecDevice" );
+			assert qName.equals( "SecTentGrpMemb" );
 
 			CFBamSaxLoader saxLoader = (CFBamSaxLoader)getParser();
 			if( saxLoader == null ) {
@@ -115,8 +114,8 @@ public class CFBamSaxLoaderSecDevice
 			}
 
 			// Instantiate an edit buffer for the parsed information
-			origBuff = (ICFBamSecDeviceObj)schemaObj.getSecDeviceTableObj().newInstance();
-			editBuff = (ICFBamSecDeviceEditObj)origBuff.beginEdit();
+			origBuff = (ICFBamSecTentGrpMembObj)schemaObj.getSecTentGrpMembTableObj().newInstance();
+			editBuff = (ICFBamSecTentGrpMembEditObj)origBuff.beginEdit();
 
 			// Extract Attributes
 			numAttrs = attrs.getLength();
@@ -169,61 +168,12 @@ public class CFBamSaxLoaderSecDevice
 				scopeObj = null;
 			}
 
-			// Resolve and apply required Container reference
+			ICFBamSecTentGrpMembObj origSecTentGrpMemb;
+			ICFBamSecTentGrpMembEditObj editSecTentGrpMemb = editBuff;
+			origSecTentGrpMemb = (ICFBamSecTentGrpMembObj)editSecTentGrpMemb.create();
+			editSecTentGrpMemb = null;
 
-			if( scopeObj == null ) {
-				throw new CFLibNullArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"scopeObj" );
-			}
-			else if( scopeObj instanceof ICFBamSecUserObj ) {
-				refSecUser = (ICFBamSecUserObj) scopeObj;
-				editBuff.setRequiredContainerSecUser( refSecUser );
-			}
-			else {
-				throw new CFLibUnsupportedClassException( getClass(),
-					S_ProcName,
-					"scopeObj",
-					scopeObj,
-					"ICFBamSecUserObj" );
-			}
-
-			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecDeviceLoaderBehaviour();
-			ICFBamSecDeviceEditObj editSecDevice = null;
-			ICFBamSecDeviceObj origSecDevice = (ICFBamSecDeviceObj)schemaObj.getSecDeviceTableObj().readSecDeviceByNameIdx( refSecUser.getRequiredSecUserId(),
-			editBuff.getRequiredDevName() );
-			if( origSecDevice == null ) {
-				editSecDevice = editBuff;
-			}
-			else {
-				switch( loaderBehaviour ) {
-					case Insert:
-						break;
-					case Update:
-						editSecDevice = (ICFBamSecDeviceEditObj)origSecDevice.beginEdit();
-						break;
-					case Replace:
-						editSecDevice = (ICFBamSecDeviceEditObj)origSecDevice.beginEdit();
-						editSecDevice.deleteInstance();
-						editSecDevice = null;
-						origSecDevice = null;
-						editSecDevice = editBuff;
-						break;
-				}
-			}
-
-			if( editSecDevice != null ) {
-				if( origSecDevice != null ) {
-					editSecDevice.update();
-				}
-				else {
-					origSecDevice = (ICFBamSecDeviceObj)editSecDevice.create();
-				}
-				editSecDevice = null;
-			}
-
-			curContext.putNamedValue( "Object", origSecDevice );
+			curContext.putNamedValue( "Object", origSecTentGrpMemb );
 		}
 		catch( RuntimeException e ) {
 			throw new SAXException( "Near " + getParser().getLocationInfo() + ": Caught and rethrew " + e.getClass().getName() + " - " + e.getMessage(),

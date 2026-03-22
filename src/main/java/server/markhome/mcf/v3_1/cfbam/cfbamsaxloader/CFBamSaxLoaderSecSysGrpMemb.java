@@ -1,5 +1,5 @@
 
-// Description: Java 25 XML SAX Element Handler for SecSession
+// Description: Java 25 XML SAX Element Handler for SecSysGrpMemb
 
 /*
  *	server.markhome.mcf.CFBam
@@ -65,13 +65,13 @@ import server.markhome.mcf.v3_1.cfint.cfintobj.*;
 import server.markhome.mcf.v3_1.cfbam.cfbamobj.*;
 
 /*
- *	CFBamSaxLoaderSecSessionParse XML SAX Element Handler implementation
- *	for SecSession.
+ *	CFBamSaxLoaderSecSysGrpMembParse XML SAX Element Handler implementation
+ *	for SecSysGrpMemb.
  */
-public class CFBamSaxLoaderSecSession
+public class CFBamSaxLoaderSecSysGrpMemb
 	extends CFLibXmlCoreElementHandler
 {
-	public CFBamSaxLoaderSecSession( CFBamSaxLoader saxLoader ) {
+	public CFBamSaxLoaderSecSysGrpMemb( CFBamSaxLoader saxLoader ) {
 		super( saxLoader );
 	}
 
@@ -83,23 +83,22 @@ public class CFBamSaxLoaderSecSession
 	throws SAXException
 	{
 		final String S_ProcName = "startElement";
-		ICFBamSecSessionObj origBuff = null;
-		ICFBamSecSessionEditObj editBuff = null;
+		ICFBamSecSysGrpMembObj origBuff = null;
+		ICFBamSecSysGrpMembEditObj editBuff = null;
 		// Common XML Attributes
 		String attrId = null;
-		// SecSession Attributes
-		String attrSecUserId = null;
-		String attrStart = null;
-		String attrFinish = null;
-		String attrSecProxyId = null;
-		// SecSession References
+		// SecSysGrpMemb Attributes
+		String attrUser = null;
+		// SecSysGrpMemb References
+		ICFBamSecSysGrpObj refGroup = null;
+		ICFBamSecUserObj refUser = null;
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
 		int idxAttr;
 		final String S_LocalName = "LocalName";
 		try {
-			assert qName.equals( "SecSession" );
+			assert qName.equals( "SecSysGrpMemb" );
 
 			CFBamSaxLoader saxLoader = (CFBamSaxLoader)getParser();
 			if( saxLoader == null ) {
@@ -118,8 +117,8 @@ public class CFBamSaxLoaderSecSession
 			}
 
 			// Instantiate an edit buffer for the parsed information
-			origBuff = (ICFBamSecSessionObj)schemaObj.getSecSessionTableObj().newInstance();
-			editBuff = (ICFBamSecSessionEditObj)origBuff.beginEdit();
+			origBuff = (ICFBamSecSysGrpMembObj)schemaObj.getSecSysGrpMembTableObj().newInstance();
+			editBuff = (ICFBamSecSysGrpMembEditObj)origBuff.beginEdit();
 
 			// Extract Attributes
 			numAttrs = attrs.getLength();
@@ -134,41 +133,14 @@ public class CFBamSaxLoaderSecSession
 					}
 					attrId = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "SecUserId" ) ) {
-					if( attrSecUserId != null ) {
+				else if( attrLocalName.equals( "User" ) ) {
+					if( attrUser != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
 							S_ProcName,
 							S_LocalName,
 							attrLocalName );
 					}
-					attrSecUserId = attrs.getValue( idxAttr );
-				}
-				else if( attrLocalName.equals( "Start" ) ) {
-					if( attrStart != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrStart = attrs.getValue( idxAttr );
-				}
-				else if( attrLocalName.equals( "Finish" ) ) {
-					if( attrFinish != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrFinish = attrs.getValue( idxAttr );
-				}
-				else if( attrLocalName.equals( "SecProxyId" ) ) {
-					if( attrSecProxyId != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrSecProxyId = attrs.getValue( idxAttr );
+					attrUser = attrs.getValue( idxAttr );
 				}
 				else if( attrLocalName.equals( "schemaLocation" ) ) {
 					// ignored
@@ -182,26 +154,17 @@ public class CFBamSaxLoaderSecSession
 			}
 
 			// Ensure that required attributes have values
-			if( ( attrSecUserId == null ) || ( attrSecUserId.length() <= 0 ) ) {
+			if( ( attrUser == null ) || ( attrUser.length() <= 0 ) ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
 					0,
-					"SecUserId" );
-			}
-			if( ( attrStart == null ) || ( attrStart.length() <= 0 ) ) {
-				throw new CFLibNullArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"Start" );
+					"User" );
 			}
 
 			// Save named attributes to context
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
-			curContext.putNamedValue( "SecUserId", attrSecUserId );
-			curContext.putNamedValue( "Start", attrStart );
-			curContext.putNamedValue( "Finish", attrFinish );
-			curContext.putNamedValue( "SecProxyId", attrSecProxyId );
+			curContext.putNamedValue( "User", attrUser );
 
 			// Convert string attributes to native Java types
 			// and apply the converted attributes to the editBuff.
@@ -213,68 +176,6 @@ public class CFBamSaxLoaderSecSession
 			else {
 				natId = null;
 			}
-			CFLibDbKeyHash256 natSecUserId;
-			try {
-				natSecUserId = CFLibDbKeyHash256.fromHex( attrSecUserId );
-			}
-			catch( RuntimeException e ) {
-				throw new CFLibInvalidArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"SecUserId",
-					e );
-			}
-			editBuff.setRequiredSecUserId( natSecUserId );
-
-			LocalDateTime natStart;
-			try {
-				natStart = CFLibXmlUtil.parseTimestamp( attrStart );
-			}
-			catch( RuntimeException e ) {
-				throw new CFLibInvalidArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"Start",
-					e );
-			}
-			editBuff.setRequiredStart( natStart );
-
-			LocalDateTime natFinish;
-			if( ( attrFinish == null ) || ( attrFinish.length() <= 0 ) ) {
-				natFinish = null;
-			}
-			else {
-				try {
-					natFinish = CFLibXmlUtil.parseTimestamp( attrFinish );
-				}
-				catch( RuntimeException e ) {
-					throw new CFLibInvalidArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"Finish",
-						e );
-				}
-			}
-			editBuff.setOptionalFinish( natFinish );
-
-			CFLibDbKeyHash256 natSecProxyId;
-			if( ( attrSecProxyId == null ) || ( attrSecProxyId.length() <= 0 ) ) {
-				natSecProxyId = null;
-			}
-			else {
-				try {
-					natSecProxyId = CFLibDbKeyHash256.fromHex( attrSecProxyId );
-				}
-				catch( RuntimeException e ) {
-					throw new CFLibInvalidArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"SecProxyId",
-						e );
-				}
-			}
-			editBuff.setOptionalSecProxyId( natSecProxyId );
-
 			// Get the scope/container object
 
 			CFLibXmlCoreContext parentContext = curContext.getPrevContext();
@@ -286,12 +187,47 @@ public class CFBamSaxLoaderSecSession
 				scopeObj = null;
 			}
 
-			ICFBamSecSessionObj origSecSession;
-			ICFBamSecSessionEditObj editSecSession = editBuff;
-			origSecSession = (ICFBamSecSessionObj)editSecSession.create();
-			editSecSession = null;
+			// Resolve and apply required Container reference
 
-			curContext.putNamedValue( "Object", origSecSession );
+			if( scopeObj == null ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"scopeObj" );
+			}
+			else if( scopeObj instanceof ICFBamSecSysGrpObj ) {
+				refGroup = (ICFBamSecSysGrpObj) scopeObj;
+				editBuff.setRequiredContainerGroup( refGroup );
+			}
+			else {
+				throw new CFLibUnsupportedClassException( getClass(),
+					S_ProcName,
+					"scopeObj",
+					scopeObj,
+					"ICFBamSecSysGrpObj" );
+			}
+
+			// Lookup refUser by key name value attr
+			if( ( attrUser != null ) && ( attrUser.length() > 0 ) ) {
+				refUser = (ICFBamSecUserObj)schemaObj.getSecUserTableObj().readSecUserByULoginIdx( attrUser );
+				if( refUser == null ) {
+					throw new CFLibNullArgumentException( getClass(),
+						S_ProcName,
+						0,
+						"Resolve User reference named \"" + attrUser + "\" to table SecUser" );
+				}
+			}
+			else {
+				refUser = null;
+			}
+			editBuff.setRequiredParentUser( refUser );
+
+			ICFBamSecSysGrpMembObj origSecSysGrpMemb;
+			ICFBamSecSysGrpMembEditObj editSecSysGrpMemb = editBuff;
+			origSecSysGrpMemb = (ICFBamSecSysGrpMembObj)editSecSysGrpMemb.create();
+			editSecSysGrpMemb = null;
+
+			curContext.putNamedValue( "Object", origSecSysGrpMemb );
 		}
 		catch( RuntimeException e ) {
 			throw new SAXException( "Near " + getParser().getLocationInfo() + ": Caught and rethrew " + e.getClass().getName() + " - " + e.getMessage(),

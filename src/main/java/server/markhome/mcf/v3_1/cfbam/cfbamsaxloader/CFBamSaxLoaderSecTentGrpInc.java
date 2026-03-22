@@ -1,5 +1,5 @@
 
-// Description: Java 25 XML SAX Element Handler for Service
+// Description: Java 25 XML SAX Element Handler for SecTentGrpInc
 
 /*
  *	server.markhome.mcf.CFBam
@@ -65,13 +65,13 @@ import server.markhome.mcf.v3_1.cfint.cfintobj.*;
 import server.markhome.mcf.v3_1.cfbam.cfbamobj.*;
 
 /*
- *	CFBamSaxLoaderServiceParse XML SAX Element Handler implementation
- *	for Service.
+ *	CFBamSaxLoaderSecTentGrpIncParse XML SAX Element Handler implementation
+ *	for SecTentGrpInc.
  */
-public class CFBamSaxLoaderService
+public class CFBamSaxLoaderSecTentGrpInc
 	extends CFLibXmlCoreElementHandler
 {
-	public CFBamSaxLoaderService( CFBamSaxLoader saxLoader ) {
+	public CFBamSaxLoaderSecTentGrpInc( CFBamSaxLoader saxLoader ) {
 		super( saxLoader );
 	}
 
@@ -83,24 +83,19 @@ public class CFBamSaxLoaderService
 	throws SAXException
 	{
 		final String S_ProcName = "startElement";
-		ICFBamServiceObj origBuff = null;
-		ICFBamServiceEditObj editBuff = null;
+		ICFBamSecTentGrpIncObj origBuff = null;
+		ICFBamSecTentGrpIncEditObj editBuff = null;
 		// Common XML Attributes
 		String attrId = null;
-		// Service Attributes
-		String attrHostPort = null;
-		String attrServiceType = null;
-		// Service References
-		ICFBamClusterObj refCluster = null;
-		ICFBamHostNodeObj refHost = null;
-		ICFBamServiceTypeObj refServiceType = null;
+		// SecTentGrpInc Attributes
+		// SecTentGrpInc References
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
 		int idxAttr;
 		final String S_LocalName = "LocalName";
 		try {
-			assert qName.equals( "Service" );
+			assert qName.equals( "SecTentGrpInc" );
 
 			CFBamSaxLoader saxLoader = (CFBamSaxLoader)getParser();
 			if( saxLoader == null ) {
@@ -119,8 +114,8 @@ public class CFBamSaxLoaderService
 			}
 
 			// Instantiate an edit buffer for the parsed information
-			origBuff = (ICFBamServiceObj)schemaObj.getServiceTableObj().newInstance();
-			editBuff = (ICFBamServiceEditObj)origBuff.beginEdit();
+			origBuff = (ICFBamSecTentGrpIncObj)schemaObj.getSecTentGrpIncTableObj().newInstance();
+			editBuff = (ICFBamSecTentGrpIncEditObj)origBuff.beginEdit();
 
 			// Extract Attributes
 			numAttrs = attrs.getLength();
@@ -135,24 +130,6 @@ public class CFBamSaxLoaderService
 					}
 					attrId = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "HostPort" ) ) {
-					if( attrHostPort != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrHostPort = attrs.getValue( idxAttr );
-				}
-				else if( attrLocalName.equals( "ServiceType" ) ) {
-					if( attrServiceType != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrServiceType = attrs.getValue( idxAttr );
-				}
 				else if( attrLocalName.equals( "schemaLocation" ) ) {
 					// ignored
 				}
@@ -165,18 +142,10 @@ public class CFBamSaxLoaderService
 			}
 
 			// Ensure that required attributes have values
-			if( ( attrHostPort == null ) || ( attrHostPort.length() <= 0 ) ) {
-				throw new CFLibNullArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"HostPort" );
-			}
 
 			// Save named attributes to context
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
-			curContext.putNamedValue( "HostPort", attrHostPort );
-			curContext.putNamedValue( "ServiceType", attrServiceType );
 
 			// Convert string attributes to native Java types
 			// and apply the converted attributes to the editBuff.
@@ -188,9 +157,6 @@ public class CFBamSaxLoaderService
 			else {
 				natId = null;
 			}
-			short natHostPort = Short.parseShort( attrHostPort );
-			editBuff.setRequiredHostPort( natHostPort );
-
 			// Get the scope/container object
 
 			CFLibXmlCoreContext parentContext = curContext.getPrevContext();
@@ -202,62 +168,41 @@ public class CFBamSaxLoaderService
 				scopeObj = null;
 			}
 
-			// Resolve and apply optional Container reference
-
-			if( scopeObj == null ) {
-				refHost = null;
-				editBuff.setOptionalContainerHost( refHost );
-				refCluster = (ICFBamClusterObj)editBuff.getRequiredOwnerCluster();
-			}
-			else if( scopeObj instanceof ICFBamHostNodeObj ) {
-				refHost = (ICFBamHostNodeObj) scopeObj;
-				editBuff.setOptionalContainerHost( refHost );
-				refCluster = (ICFBamClusterObj)editBuff.getRequiredOwnerCluster();
+			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecTentGrpIncLoaderBehaviour();
+			ICFBamSecTentGrpIncEditObj editSecTentGrpInc = null;
+			ICFBamSecTentGrpIncObj origSecTentGrpInc = (ICFBamSecTentGrpIncObj)schemaObj.getSecTentGrpIncTableObj().readSecTentGrpIncByIdIdx( editBuff.getRequiredSecTentGrpId(),
+			editBuff.getRequiredIncName() );
+			if( origSecTentGrpInc == null ) {
+				editSecTentGrpInc = editBuff;
 			}
 			else {
-				throw new CFLibUnsupportedClassException( getClass(),
-					S_ProcName,
-					"scopeObj",
-					scopeObj,
-					"ICFBamHostNodeObj" );
+				switch( loaderBehaviour ) {
+					case Insert:
+						break;
+					case Update:
+						editSecTentGrpInc = (ICFBamSecTentGrpIncEditObj)origSecTentGrpInc.beginEdit();
+						break;
+					case Replace:
+						editSecTentGrpInc = (ICFBamSecTentGrpIncEditObj)origSecTentGrpInc.beginEdit();
+						editSecTentGrpInc.deleteInstance();
+						editSecTentGrpInc = null;
+						origSecTentGrpInc = null;
+						editSecTentGrpInc = editBuff;
+						break;
+				}
 			}
 
-			// Resolve and apply Owner reference
-
-			if( refCluster == null ) {
-				if( scopeObj instanceof ICFBamClusterObj ) {
-					refCluster = (ICFBamClusterObj) scopeObj;
-					editBuff.setRequiredOwnerCluster( refCluster );
+			if( editSecTentGrpInc != null ) {
+				if( origSecTentGrpInc != null ) {
+					editSecTentGrpInc.update();
 				}
 				else {
-					throw new CFLibNullArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"Owner<Cluster>" );
+					origSecTentGrpInc = (ICFBamSecTentGrpIncObj)editSecTentGrpInc.create();
 				}
+				editSecTentGrpInc = null;
 			}
 
-			// Lookup refServiceType by key name value attr
-			if( ( attrServiceType != null ) && ( attrServiceType.length() > 0 ) ) {
-				refServiceType = (ICFBamServiceTypeObj)schemaObj.getServiceTypeTableObj().readServiceTypeByUDescrIdx( attrServiceType );
-				if( refServiceType == null ) {
-					throw new CFLibNullArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"Resolve ServiceType reference named \"" + attrServiceType + "\" to table ServiceType" );
-				}
-			}
-			else {
-				refServiceType = null;
-			}
-			editBuff.setOptionalParentServiceType( refServiceType );
-
-			ICFBamServiceObj origService;
-			ICFBamServiceEditObj editService = editBuff;
-			origService = (ICFBamServiceObj)editService.create();
-			editService = null;
-
-			curContext.putNamedValue( "Object", origService );
+			curContext.putNamedValue( "Object", origSecTentGrpInc );
 		}
 		catch( RuntimeException e ) {
 			throw new SAXException( "Near " + getParser().getLocationInfo() + ": Caught and rethrew " + e.getClass().getName() + " - " + e.getMessage(),

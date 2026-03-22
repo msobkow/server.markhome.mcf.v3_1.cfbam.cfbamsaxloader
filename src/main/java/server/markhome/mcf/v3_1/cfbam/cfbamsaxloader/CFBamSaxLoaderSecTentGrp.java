@@ -1,5 +1,5 @@
 
-// Description: Java 25 XML SAX Element Handler for SecGrpMemb
+// Description: Java 25 XML SAX Element Handler for SecTentGrp
 
 /*
  *	server.markhome.mcf.CFBam
@@ -65,13 +65,13 @@ import server.markhome.mcf.v3_1.cfint.cfintobj.*;
 import server.markhome.mcf.v3_1.cfbam.cfbamobj.*;
 
 /*
- *	CFBamSaxLoaderSecGrpMembParse XML SAX Element Handler implementation
- *	for SecGrpMemb.
+ *	CFBamSaxLoaderSecTentGrpParse XML SAX Element Handler implementation
+ *	for SecTentGrp.
  */
-public class CFBamSaxLoaderSecGrpMemb
+public class CFBamSaxLoaderSecTentGrp
 	extends CFLibXmlCoreElementHandler
 {
-	public CFBamSaxLoaderSecGrpMemb( CFBamSaxLoader saxLoader ) {
+	public CFBamSaxLoaderSecTentGrp( CFBamSaxLoader saxLoader ) {
 		super( saxLoader );
 	}
 
@@ -83,23 +83,21 @@ public class CFBamSaxLoaderSecGrpMemb
 	throws SAXException
 	{
 		final String S_ProcName = "startElement";
-		ICFBamSecGrpMembObj origBuff = null;
-		ICFBamSecGrpMembEditObj editBuff = null;
+		ICFBamSecTentGrpObj origBuff = null;
+		ICFBamSecTentGrpEditObj editBuff = null;
 		// Common XML Attributes
 		String attrId = null;
-		// SecGrpMemb Attributes
-		String attrUser = null;
-		// SecGrpMemb References
-		ICFBamClusterObj refCluster = null;
-		ICFBamSecGroupObj refGroup = null;
-		ICFBamSecUserObj refUser = null;
+		// SecTentGrp Attributes
+		String attrTenantId = null;
+		String attrName = null;
+		// SecTentGrp References
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
 		int idxAttr;
 		final String S_LocalName = "LocalName";
 		try {
-			assert qName.equals( "SecGrpMemb" );
+			assert qName.equals( "SecTentGrp" );
 
 			CFBamSaxLoader saxLoader = (CFBamSaxLoader)getParser();
 			if( saxLoader == null ) {
@@ -118,8 +116,8 @@ public class CFBamSaxLoaderSecGrpMemb
 			}
 
 			// Instantiate an edit buffer for the parsed information
-			origBuff = (ICFBamSecGrpMembObj)schemaObj.getSecGrpMembTableObj().newInstance();
-			editBuff = (ICFBamSecGrpMembEditObj)origBuff.beginEdit();
+			origBuff = (ICFBamSecTentGrpObj)schemaObj.getSecTentGrpTableObj().newInstance();
+			editBuff = (ICFBamSecTentGrpEditObj)origBuff.beginEdit();
 
 			// Extract Attributes
 			numAttrs = attrs.getLength();
@@ -134,14 +132,23 @@ public class CFBamSaxLoaderSecGrpMemb
 					}
 					attrId = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "User" ) ) {
-					if( attrUser != null ) {
+				else if( attrLocalName.equals( "TenantId" ) ) {
+					if( attrTenantId != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
 							S_ProcName,
 							S_LocalName,
 							attrLocalName );
 					}
-					attrUser = attrs.getValue( idxAttr );
+					attrTenantId = attrs.getValue( idxAttr );
+				}
+				else if( attrLocalName.equals( "Name" ) ) {
+					if( attrName != null ) {
+						throw new CFLibUniqueIndexViolationException( getClass(),
+							S_ProcName,
+							S_LocalName,
+							attrLocalName );
+					}
+					attrName = attrs.getValue( idxAttr );
 				}
 				else if( attrLocalName.equals( "schemaLocation" ) ) {
 					// ignored
@@ -155,17 +162,24 @@ public class CFBamSaxLoaderSecGrpMemb
 			}
 
 			// Ensure that required attributes have values
-			if( ( attrUser == null ) || ( attrUser.length() <= 0 ) ) {
+			if( ( attrTenantId == null ) || ( attrTenantId.length() <= 0 ) ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
 					0,
-					"User" );
+					"TenantId" );
+			}
+			if( attrName == null ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"Name" );
 			}
 
 			// Save named attributes to context
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
-			curContext.putNamedValue( "User", attrUser );
+			curContext.putNamedValue( "TenantId", attrTenantId );
+			curContext.putNamedValue( "Name", attrName );
 
 			// Convert string attributes to native Java types
 			// and apply the converted attributes to the editBuff.
@@ -177,6 +191,22 @@ public class CFBamSaxLoaderSecGrpMemb
 			else {
 				natId = null;
 			}
+			CFLibDbKeyHash256 natTenantId;
+			try {
+				natTenantId = CFLibDbKeyHash256.fromHex( attrTenantId );
+			}
+			catch( RuntimeException e ) {
+				throw new CFLibInvalidArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"TenantId",
+					e );
+			}
+			editBuff.setRequiredTenantId( natTenantId );
+
+			String natName = attrName;
+			editBuff.setRequiredName( natName );
+
 			// Get the scope/container object
 
 			CFLibXmlCoreContext parentContext = curContext.getPrevContext();
@@ -188,63 +218,43 @@ public class CFBamSaxLoaderSecGrpMemb
 				scopeObj = null;
 			}
 
-			// Resolve and apply required Container reference
-
-			if( scopeObj == null ) {
-				throw new CFLibNullArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"scopeObj" );
-			}
-			else if( scopeObj instanceof ICFBamSecGroupObj ) {
-				refGroup = (ICFBamSecGroupObj) scopeObj;
-				editBuff.setRequiredContainerGroup( refGroup );
-				refCluster = (ICFBamClusterObj)editBuff.getRequiredOwnerCluster();
+			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecTentGrpLoaderBehaviour();
+			ICFBamSecTentGrpEditObj editSecTentGrp = null;
+			ICFBamSecTentGrpObj origSecTentGrp = (ICFBamSecTentGrpObj)schemaObj.getSecTentGrpTableObj().readSecTentGrpByUNameIdx( editBuff.getRequiredTenantId(),
+			editBuff.getRequiredName() );
+			if( origSecTentGrp == null ) {
+				editSecTentGrp = editBuff;
 			}
 			else {
-				throw new CFLibUnsupportedClassException( getClass(),
-					S_ProcName,
-					"scopeObj",
-					scopeObj,
-					"ICFBamSecGroupObj" );
+				switch( loaderBehaviour ) {
+					case Insert:
+						break;
+					case Update:
+						editSecTentGrp = (ICFBamSecTentGrpEditObj)origSecTentGrp.beginEdit();
+						editSecTentGrp.setRequiredTenantId( editBuff.getRequiredTenantId() );
+						editSecTentGrp.setRequiredName( editBuff.getRequiredName() );
+						break;
+					case Replace:
+						editSecTentGrp = (ICFBamSecTentGrpEditObj)origSecTentGrp.beginEdit();
+						editSecTentGrp.deleteInstance();
+						editSecTentGrp = null;
+						origSecTentGrp = null;
+						editSecTentGrp = editBuff;
+						break;
+				}
 			}
 
-			// Resolve and apply Owner reference
-
-			if( refCluster == null ) {
-				if( scopeObj instanceof ICFBamClusterObj ) {
-					refCluster = (ICFBamClusterObj) scopeObj;
-					editBuff.setRequiredOwnerCluster( refCluster );
+			if( editSecTentGrp != null ) {
+				if( origSecTentGrp != null ) {
+					editSecTentGrp.update();
 				}
 				else {
-					throw new CFLibNullArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"Owner<Cluster>" );
+					origSecTentGrp = (ICFBamSecTentGrpObj)editSecTentGrp.create();
 				}
+				editSecTentGrp = null;
 			}
 
-			// Lookup refUser by key name value attr
-			if( ( attrUser != null ) && ( attrUser.length() > 0 ) ) {
-				refUser = (ICFBamSecUserObj)schemaObj.getSecUserTableObj().readSecUserByULoginIdx( attrUser );
-				if( refUser == null ) {
-					throw new CFLibNullArgumentException( getClass(),
-						S_ProcName,
-						0,
-						"Resolve User reference named \"" + attrUser + "\" to table SecUser" );
-				}
-			}
-			else {
-				refUser = null;
-			}
-			editBuff.setRequiredParentUser( refUser );
-
-			ICFBamSecGrpMembObj origSecGrpMemb;
-			ICFBamSecGrpMembEditObj editSecGrpMemb = editBuff;
-			origSecGrpMemb = (ICFBamSecGrpMembObj)editSecGrpMemb.create();
-			editSecGrpMemb = null;
-
-			curContext.putNamedValue( "Object", origSecGrpMemb );
+			curContext.putNamedValue( "Object", origSecTentGrp );
 		}
 		catch( RuntimeException e ) {
 			throw new SAXException( "Near " + getParser().getLocationInfo() + ": Caught and rethrew " + e.getClass().getName() + " - " + e.getMessage(),
