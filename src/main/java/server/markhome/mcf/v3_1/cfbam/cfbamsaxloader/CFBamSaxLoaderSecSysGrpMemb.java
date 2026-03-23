@@ -222,10 +222,39 @@ public class CFBamSaxLoaderSecSysGrpMemb
 			}
 			editBuff.setRequiredParentUser( refUser );
 
-			ICFBamSecSysGrpMembObj origSecSysGrpMemb;
-			ICFBamSecSysGrpMembEditObj editSecSysGrpMemb = editBuff;
-			origSecSysGrpMemb = (ICFBamSecSysGrpMembObj)editSecSysGrpMemb.create();
-			editSecSysGrpMemb = null;
+			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecSysGrpMembLoaderBehaviour();
+			ICFBamSecSysGrpMembEditObj editSecSysGrpMemb = null;
+			ICFBamSecSysGrpMembObj origSecSysGrpMemb = (ICFBamSecSysGrpMembObj)schemaObj.getSecSysGrpMembTableObj().readSecSysGrpMembByUserIdx( refUser.getRequiredSecUserId() );
+			if( origSecSysGrpMemb == null ) {
+				editSecSysGrpMemb = editBuff;
+			}
+			else {
+				switch( loaderBehaviour ) {
+					case Insert:
+						break;
+					case Update:
+						editSecSysGrpMemb = (ICFBamSecSysGrpMembEditObj)origSecSysGrpMemb.beginEdit();
+						editSecSysGrpMemb.setRequiredParentUser( editBuff.getRequiredParentUser() );
+						break;
+					case Replace:
+						editSecSysGrpMemb = (ICFBamSecSysGrpMembEditObj)origSecSysGrpMemb.beginEdit();
+						editSecSysGrpMemb.deleteInstance();
+						editSecSysGrpMemb = null;
+						origSecSysGrpMemb = null;
+						editSecSysGrpMemb = editBuff;
+						break;
+				}
+			}
+
+			if( editSecSysGrpMemb != null ) {
+				if( origSecSysGrpMemb != null ) {
+					editSecSysGrpMemb.update();
+				}
+				else {
+					origSecSysGrpMemb = (ICFBamSecSysGrpMembObj)editSecSysGrpMemb.create();
+				}
+				editSecSysGrpMemb = null;
+			}
 
 			curContext.putNamedValue( "Object", origSecSysGrpMemb );
 		}

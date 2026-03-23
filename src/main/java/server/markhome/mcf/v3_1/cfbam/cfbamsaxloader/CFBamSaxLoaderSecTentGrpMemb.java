@@ -168,10 +168,38 @@ public class CFBamSaxLoaderSecTentGrpMemb
 				scopeObj = null;
 			}
 
-			ICFBamSecTentGrpMembObj origSecTentGrpMemb;
-			ICFBamSecTentGrpMembEditObj editSecTentGrpMemb = editBuff;
-			origSecTentGrpMemb = (ICFBamSecTentGrpMembObj)editSecTentGrpMemb.create();
-			editSecTentGrpMemb = null;
+			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecTentGrpMembLoaderBehaviour();
+			ICFBamSecTentGrpMembEditObj editSecTentGrpMemb = null;
+			ICFBamSecTentGrpMembObj origSecTentGrpMemb = (ICFBamSecTentGrpMembObj)schemaObj.getSecTentGrpMembTableObj().readSecTentGrpMembByUserIdx( editBuff.getRequiredSecUserId() );
+			if( origSecTentGrpMemb == null ) {
+				editSecTentGrpMemb = editBuff;
+			}
+			else {
+				switch( loaderBehaviour ) {
+					case Insert:
+						break;
+					case Update:
+						editSecTentGrpMemb = (ICFBamSecTentGrpMembEditObj)origSecTentGrpMemb.beginEdit();
+						break;
+					case Replace:
+						editSecTentGrpMemb = (ICFBamSecTentGrpMembEditObj)origSecTentGrpMemb.beginEdit();
+						editSecTentGrpMemb.deleteInstance();
+						editSecTentGrpMemb = null;
+						origSecTentGrpMemb = null;
+						editSecTentGrpMemb = editBuff;
+						break;
+				}
+			}
+
+			if( editSecTentGrpMemb != null ) {
+				if( origSecTentGrpMemb != null ) {
+					editSecTentGrpMemb.update();
+				}
+				else {
+					origSecTentGrpMemb = (ICFBamSecTentGrpMembObj)editSecTentGrpMemb.create();
+				}
+				editSecTentGrpMemb = null;
+			}
 
 			curContext.putNamedValue( "Object", origSecTentGrpMemb );
 		}
