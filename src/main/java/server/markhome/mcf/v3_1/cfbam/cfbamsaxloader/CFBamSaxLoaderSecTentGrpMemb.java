@@ -170,7 +170,8 @@ public class CFBamSaxLoaderSecTentGrpMemb
 
 			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecTentGrpMembLoaderBehaviour();
 			ICFBamSecTentGrpMembEditObj editSecTentGrpMemb = null;
-			ICFBamSecTentGrpMembObj origSecTentGrpMemb = (ICFBamSecTentGrpMembObj)schemaObj.getSecTentGrpMembTableObj().readSecTentGrpMembByUserIdx( editBuff.getRequiredSecUserId() );
+			ICFBamSecTentGrpMembObj origSecTentGrpMemb = (ICFBamSecTentGrpMembObj)schemaObj.getSecTentGrpMembTableObj().readSecTentGrpMembByIdIdx( editBuff.getRequiredSecTentGrpId(),
+			editBuff.getRequiredLoginId() );
 			if( origSecTentGrpMemb == null ) {
 				editSecTentGrpMemb = editBuff;
 			}

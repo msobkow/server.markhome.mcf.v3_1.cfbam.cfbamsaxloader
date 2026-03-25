@@ -171,7 +171,7 @@ public class CFBamSaxLoaderSecTentGrpInc
 			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecTentGrpIncLoaderBehaviour();
 			ICFBamSecTentGrpIncEditObj editSecTentGrpInc = null;
 			ICFBamSecTentGrpIncObj origSecTentGrpInc = (ICFBamSecTentGrpIncObj)schemaObj.getSecTentGrpIncTableObj().readSecTentGrpIncByIdIdx( editBuff.getRequiredSecTentGrpId(),
-			editBuff.getRequiredIncName() );
+			editBuff.getRequiredInclName() );
 			if( origSecTentGrpInc == null ) {
 				editSecTentGrpInc = editBuff;
 			}
