@@ -88,9 +88,9 @@ public class CFBamSaxLoaderSecTentGrp
 		// Common XML Attributes
 		String attrId = null;
 		// SecTentGrp Attributes
-		String attrTenantId = null;
 		String attrName = null;
 		// SecTentGrp References
+		ICFBamTenantObj refTenant = null;
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
@@ -132,15 +132,6 @@ public class CFBamSaxLoaderSecTentGrp
 					}
 					attrId = attrs.getValue( idxAttr );
 				}
-				else if( attrLocalName.equals( "TenantId" ) ) {
-					if( attrTenantId != null ) {
-						throw new CFLibUniqueIndexViolationException( getClass(),
-							S_ProcName,
-							S_LocalName,
-							attrLocalName );
-					}
-					attrTenantId = attrs.getValue( idxAttr );
-				}
 				else if( attrLocalName.equals( "Name" ) ) {
 					if( attrName != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
@@ -162,12 +153,6 @@ public class CFBamSaxLoaderSecTentGrp
 			}
 
 			// Ensure that required attributes have values
-			if( ( attrTenantId == null ) || ( attrTenantId.length() <= 0 ) ) {
-				throw new CFLibNullArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"TenantId" );
-			}
 			if( attrName == null ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
@@ -178,7 +163,6 @@ public class CFBamSaxLoaderSecTentGrp
 			// Save named attributes to context
 			CFLibXmlCoreContext curContext = getParser().getCurContext();
 			curContext.putNamedValue( "Id", attrId );
-			curContext.putNamedValue( "TenantId", attrTenantId );
 			curContext.putNamedValue( "Name", attrName );
 
 			// Convert string attributes to native Java types
@@ -191,19 +175,6 @@ public class CFBamSaxLoaderSecTentGrp
 			else {
 				natId = null;
 			}
-			CFLibDbKeyHash256 natTenantId;
-			try {
-				natTenantId = CFLibDbKeyHash256.fromHex( attrTenantId );
-			}
-			catch( RuntimeException e ) {
-				throw new CFLibInvalidArgumentException( getClass(),
-					S_ProcName,
-					0,
-					"TenantId",
-					e );
-			}
-			editBuff.setRequiredTenantId( natTenantId );
-
 			String natName = attrName;
 			editBuff.setRequiredName( natName );
 
@@ -218,9 +189,25 @@ public class CFBamSaxLoaderSecTentGrp
 				scopeObj = null;
 			}
 
+			refTenant = null;
+			// Resolve and apply Owner reference
+
+			if( refTenant == null ) {
+				if( scopeObj instanceof ICFBamTenantObj ) {
+					refTenant = (ICFBamTenantObj) scopeObj;
+					editBuff.setRequiredOwnerTenant( refTenant );
+				}
+				else {
+					throw new CFLibNullArgumentException( getClass(),
+						S_ProcName,
+						0,
+						"Owner<Tenant>" );
+				}
+			}
+
 			CFBamSaxLoader.LoaderBehaviourEnum loaderBehaviour = saxLoader.getSecTentGrpLoaderBehaviour();
 			ICFBamSecTentGrpEditObj editSecTentGrp = null;
-			ICFBamSecTentGrpObj origSecTentGrp = (ICFBamSecTentGrpObj)schemaObj.getSecTentGrpTableObj().readSecTentGrpByUNameIdx( editBuff.getRequiredTenantId(),
+			ICFBamSecTentGrpObj origSecTentGrp = (ICFBamSecTentGrpObj)schemaObj.getSecTentGrpTableObj().readSecTentGrpByUNameIdx( refTenant.getRequiredId(),
 			editBuff.getRequiredName() );
 			if( origSecTentGrp == null ) {
 				editSecTentGrp = editBuff;
@@ -231,7 +218,6 @@ public class CFBamSaxLoaderSecTentGrp
 						break;
 					case Update:
 						editSecTentGrp = (ICFBamSecTentGrpEditObj)origSecTentGrp.beginEdit();
-						editSecTentGrp.setRequiredTenantId( editBuff.getRequiredTenantId() );
 						editSecTentGrp.setRequiredName( editBuff.getRequiredName() );
 						break;
 					case Replace:
