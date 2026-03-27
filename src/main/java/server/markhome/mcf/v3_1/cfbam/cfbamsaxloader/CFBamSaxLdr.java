@@ -2087,6 +2087,23 @@ public class CFBamSaxLdr
 				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
 			}
 		}
+		else if( tableName.equals( "SchemaTweak" ) ) {
+			if( tableOption.equals( "*" ) ) {
+				// Leave at default
+			}
+			else if( tableOption.equals( "Insert" ) ) {
+				loader.setSchemaTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Insert );
+			}
+			else if( tableOption.equals( "Update" ) ) {
+				loader.setSchemaTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Update );
+			}
+			else if( tableOption.equals( "Replace" ) ) {
+				loader.setSchemaTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
+			}
+			else {
+				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
+			}
+		}
 		else if( tableName.equals( "Scope" ) ) {
 			if( tableOption.equals( "*" ) ) {
 				// Leave at default
@@ -2665,6 +2682,23 @@ public class CFBamSaxLdr
 				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
 			}
 		}
+		else if( tableName.equals( "TableTweak" ) ) {
+			if( tableOption.equals( "*" ) ) {
+				// Leave at default
+			}
+			else if( tableOption.equals( "Insert" ) ) {
+				loader.setTableTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Insert );
+			}
+			else if( tableOption.equals( "Update" ) ) {
+				loader.setTableTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Update );
+			}
+			else if( tableOption.equals( "Replace" ) ) {
+				loader.setTableTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
+			}
+			else {
+				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
+			}
+		}
 		else if( tableName.equals( "Tenant" ) ) {
 			if( tableOption.equals( "*" ) ) {
 				// Leave at default
@@ -2932,6 +2966,23 @@ public class CFBamSaxLdr
 			}
 			else if( tableOption.equals( "Replace" ) ) {
 				loader.setTopProjectLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
+			}
+			else {
+				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
+			}
+		}
+		else if( tableName.equals( "Tweak" ) ) {
+			if( tableOption.equals( "*" ) ) {
+				// Leave at default
+			}
+			else if( tableOption.equals( "Insert" ) ) {
+				loader.setTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Insert );
+			}
+			else if( tableOption.equals( "Update" ) ) {
+				loader.setTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Update );
+			}
+			else if( tableOption.equals( "Replace" ) ) {
+				loader.setTweakLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
 			}
 			else {
 				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );

@@ -222,6 +222,7 @@ public class CFBamSaxLoader
 	private LoaderBehaviourEnum relationColLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum schemaDefLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum schemaRefLoaderBehaviour = LoaderBehaviourEnum.Insert;
+	private LoaderBehaviourEnum schemaTweakLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum scopeLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum secClusGrpLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum secClusGrpIncLoaderBehaviour = LoaderBehaviourEnum.Insert;
@@ -256,6 +257,7 @@ public class CFBamSaxLoader
 	private LoaderBehaviourEnum tZTimestampTypeLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum tableLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum tableColLoaderBehaviour = LoaderBehaviourEnum.Update;
+	private LoaderBehaviourEnum tableTweakLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum tenantLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum textColLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum textDefLoaderBehaviour = LoaderBehaviourEnum.Update;
@@ -272,6 +274,7 @@ public class CFBamSaxLoader
 	private LoaderBehaviourEnum tokenTypeLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum topDomainLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum topProjectLoaderBehaviour = LoaderBehaviourEnum.Update;
+	private LoaderBehaviourEnum tweakLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum uInt16ColLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum uInt16DefLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum uInt16TypeLoaderBehaviour = LoaderBehaviourEnum.Update;
@@ -407,6 +410,7 @@ public class CFBamSaxLoader
 	private CFBamSaxLoaderRelationCol relationColHandler = null;
 	private CFBamSaxLoaderSchemaDef schemaDefHandler = null;
 	private CFBamSaxLoaderSchemaRef schemaRefHandler = null;
+	private CFBamSaxLoaderSchemaTweak schemaTweakHandler = null;
 	private CFBamSaxLoaderScope scopeHandler = null;
 	private CFBamSaxLoaderSecClusGrp secClusGrpHandler = null;
 	private CFBamSaxLoaderSecClusGrpInc secClusGrpIncHandler = null;
@@ -441,6 +445,7 @@ public class CFBamSaxLoader
 	private CFBamSaxLoaderTZTimestampType tZTimestampTypeHandler = null;
 	private CFBamSaxLoaderTable tableHandler = null;
 	private CFBamSaxLoaderTableCol tableColHandler = null;
+	private CFBamSaxLoaderTableTweak tableTweakHandler = null;
 	private CFBamSaxLoaderTenant tenantHandler = null;
 	private CFBamSaxLoaderTextCol textColHandler = null;
 	private CFBamSaxLoaderTextDef textDefHandler = null;
@@ -457,6 +462,7 @@ public class CFBamSaxLoader
 	private CFBamSaxLoaderTokenType tokenTypeHandler = null;
 	private CFBamSaxLoaderTopDomain topDomainHandler = null;
 	private CFBamSaxLoaderTopProject topProjectHandler = null;
+	private CFBamSaxLoaderTweak tweakHandler = null;
 	private CFBamSaxLoaderUInt16Col uInt16ColHandler = null;
 	private CFBamSaxLoaderUInt16Def uInt16DefHandler = null;
 	private CFBamSaxLoaderUInt16Type uInt16TypeHandler = null;
@@ -1137,6 +1143,7 @@ public class CFBamSaxLoader
 			schemaDefHandler.addElementHandler( "Uuid6Type", getUuid6TypeHandler() );
 			schemaDefHandler.addElementHandler( "Uuid6Gen", getUuid6GenHandler() );
 			schemaDefHandler.addElementHandler( "SchemaRef", getSchemaRefHandler() );
+			schemaDefHandler.addElementHandler( "SchemaTweak", getSchemaTweakHandler() );
 		}
 		return( schemaDefHandler );
 	}
@@ -1145,6 +1152,12 @@ public class CFBamSaxLoader
 			schemaRefHandler = new CFBamSaxLoaderSchemaRef( this );
 		}
 		return( schemaRefHandler );
+	}
+	protected CFBamSaxLoaderSchemaTweak getSchemaTweakHandler() {
+		if( schemaTweakHandler == null ) {
+			schemaTweakHandler = new CFBamSaxLoaderSchemaTweak( this );
+		}
+		return( schemaTweakHandler );
 	}
 	protected CFBamSaxLoaderScope getScopeHandler() {
 		if( scopeHandler == null ) {
@@ -1386,6 +1399,7 @@ public class CFBamSaxLoader
 			tableHandler.addElementHandler( "ServerObjFunc", getServerObjFuncHandler() );
 			tableHandler.addElementHandler( "ServerProc", getServerProcHandler() );
 			tableHandler.addElementHandler( "ServerListFunc", getServerListFuncHandler() );
+			tableHandler.addElementHandler( "TableTweak", getTableTweakHandler() );
 		}
 		return( tableHandler );
 	}
@@ -1394,6 +1408,12 @@ public class CFBamSaxLoader
 			tableColHandler = new CFBamSaxLoaderTableCol( this );
 		}
 		return( tableColHandler );
+	}
+	protected CFBamSaxLoaderTableTweak getTableTweakHandler() {
+		if( tableTweakHandler == null ) {
+			tableTweakHandler = new CFBamSaxLoaderTableTweak( this );
+		}
+		return( tableTweakHandler );
 	}
 	protected CFBamSaxLoaderTenant getTenantHandler() {
 		if( tenantHandler == null ) {
@@ -1495,6 +1515,12 @@ public class CFBamSaxLoader
 			topProjectHandler.addElementHandler( "SubProject", getSubProjectHandler() );
 		}
 		return( topProjectHandler );
+	}
+	protected CFBamSaxLoaderTweak getTweakHandler() {
+		if( tweakHandler == null ) {
+			tweakHandler = new CFBamSaxLoaderTweak( this );
+		}
+		return( tweakHandler );
 	}
 	protected CFBamSaxLoaderUInt16Col getUInt16ColHandler() {
 		if( uInt16ColHandler == null ) {
@@ -2491,6 +2517,14 @@ public class CFBamSaxLoader
 		schemaRefLoaderBehaviour = value;
 	}
 
+	public LoaderBehaviourEnum getSchemaTweakLoaderBehaviour() {
+		return( schemaTweakLoaderBehaviour );
+	}
+
+	public void setSchemaTweakLoaderBehaviour( LoaderBehaviourEnum value ) {
+		schemaTweakLoaderBehaviour = value;
+	}
+
 	public LoaderBehaviourEnum getScopeLoaderBehaviour() {
 		return( scopeLoaderBehaviour );
 	}
@@ -2763,6 +2797,14 @@ public class CFBamSaxLoader
 		tableColLoaderBehaviour = value;
 	}
 
+	public LoaderBehaviourEnum getTableTweakLoaderBehaviour() {
+		return( tableTweakLoaderBehaviour );
+	}
+
+	public void setTableTweakLoaderBehaviour( LoaderBehaviourEnum value ) {
+		tableTweakLoaderBehaviour = value;
+	}
+
 	public LoaderBehaviourEnum getTenantLoaderBehaviour() {
 		return( tenantLoaderBehaviour );
 	}
@@ -2889,6 +2931,14 @@ public class CFBamSaxLoader
 
 	public void setTopProjectLoaderBehaviour( LoaderBehaviourEnum value ) {
 		topProjectLoaderBehaviour = value;
+	}
+
+	public LoaderBehaviourEnum getTweakLoaderBehaviour() {
+		return( tweakLoaderBehaviour );
+	}
+
+	public void setTweakLoaderBehaviour( LoaderBehaviourEnum value ) {
+		tweakLoaderBehaviour = value;
 	}
 
 	public LoaderBehaviourEnum getUInt16ColLoaderBehaviour() {
