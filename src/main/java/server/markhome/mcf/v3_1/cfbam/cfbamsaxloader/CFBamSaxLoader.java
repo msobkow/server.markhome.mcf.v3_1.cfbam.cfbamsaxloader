@@ -235,7 +235,9 @@ public class CFBamSaxLoader
 	private LoaderBehaviourEnum secTentGrpIncLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum secTentGrpMembLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum secUserLoaderBehaviour = LoaderBehaviourEnum.Insert;
+	private LoaderBehaviourEnum secUserEMConfLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum secUserPWHistoryLoaderBehaviour = LoaderBehaviourEnum.Insert;
+	private LoaderBehaviourEnum secUserPWResetLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum secUserPasswordLoaderBehaviour = LoaderBehaviourEnum.Insert;
 	private LoaderBehaviourEnum serverListFuncLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum serverMethodLoaderBehaviour = LoaderBehaviourEnum.Update;
@@ -423,7 +425,9 @@ public class CFBamSaxLoader
 	private CFBamSaxLoaderSecTentGrpInc secTentGrpIncHandler = null;
 	private CFBamSaxLoaderSecTentGrpMemb secTentGrpMembHandler = null;
 	private CFBamSaxLoaderSecUser secUserHandler = null;
+	private CFBamSaxLoaderSecUserEMConf secUserEMConfHandler = null;
 	private CFBamSaxLoaderSecUserPWHistory secUserPWHistoryHandler = null;
+	private CFBamSaxLoaderSecUserPWReset secUserPWResetHandler = null;
 	private CFBamSaxLoaderSecUserPassword secUserPasswordHandler = null;
 	private CFBamSaxLoaderServerListFunc serverListFuncHandler = null;
 	private CFBamSaxLoaderServerMethod serverMethodHandler = null;
@@ -1231,11 +1235,23 @@ public class CFBamSaxLoader
 		}
 		return( secUserHandler );
 	}
+	protected CFBamSaxLoaderSecUserEMConf getSecUserEMConfHandler() {
+		if( secUserEMConfHandler == null ) {
+			secUserEMConfHandler = new CFBamSaxLoaderSecUserEMConf( this );
+		}
+		return( secUserEMConfHandler );
+	}
 	protected CFBamSaxLoaderSecUserPWHistory getSecUserPWHistoryHandler() {
 		if( secUserPWHistoryHandler == null ) {
 			secUserPWHistoryHandler = new CFBamSaxLoaderSecUserPWHistory( this );
 		}
 		return( secUserPWHistoryHandler );
+	}
+	protected CFBamSaxLoaderSecUserPWReset getSecUserPWResetHandler() {
+		if( secUserPWResetHandler == null ) {
+			secUserPWResetHandler = new CFBamSaxLoaderSecUserPWReset( this );
+		}
+		return( secUserPWResetHandler );
 	}
 	protected CFBamSaxLoaderSecUserPassword getSecUserPasswordHandler() {
 		if( secUserPasswordHandler == null ) {
@@ -1695,7 +1711,6 @@ public class CFBamSaxLoader
 			saxDocHandler.addElementHandler( "SecTentGrp", getSecTentGrpHandler() );
 			saxDocHandler.addElementHandler( "SecUser", getSecUserHandler() );
 			saxDocHandler.addElementHandler( "SecUserPWHistory", getSecUserPWHistoryHandler() );
-			saxDocHandler.addElementHandler( "SecUserPassword", getSecUserPasswordHandler() );
 			saxDocHandler.addElementHandler( "URLProtocol", getURLProtocolHandler() );
 		}
 		return( saxDocHandler );
@@ -2621,12 +2636,28 @@ public class CFBamSaxLoader
 		secUserLoaderBehaviour = value;
 	}
 
+	public LoaderBehaviourEnum getSecUserEMConfLoaderBehaviour() {
+		return( secUserEMConfLoaderBehaviour );
+	}
+
+	public void setSecUserEMConfLoaderBehaviour( LoaderBehaviourEnum value ) {
+		secUserEMConfLoaderBehaviour = value;
+	}
+
 	public LoaderBehaviourEnum getSecUserPWHistoryLoaderBehaviour() {
 		return( secUserPWHistoryLoaderBehaviour );
 	}
 
 	public void setSecUserPWHistoryLoaderBehaviour( LoaderBehaviourEnum value ) {
 		secUserPWHistoryLoaderBehaviour = value;
+	}
+
+	public LoaderBehaviourEnum getSecUserPWResetLoaderBehaviour() {
+		return( secUserPWResetLoaderBehaviour );
+	}
+
+	public void setSecUserPWResetLoaderBehaviour( LoaderBehaviourEnum value ) {
+		secUserPWResetLoaderBehaviour = value;
 	}
 
 	public LoaderBehaviourEnum getSecUserPasswordLoaderBehaviour() {

@@ -91,6 +91,7 @@ public class CFBamSaxLoaderSecUserPassword
 		String attrPWSetStamp = null;
 		String attrPasswordHash = null;
 		// SecUserPassword References
+		ICFBamSecUserObj refUser = null;
 		// Attribute Extraction
 		String attrLocalName;
 		int numAttrs;
@@ -216,6 +217,26 @@ public class CFBamSaxLoaderSecUserPassword
 			}
 			else {
 				scopeObj = null;
+			}
+
+			// Resolve and apply required Container reference
+
+			if( scopeObj == null ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"scopeObj" );
+			}
+			else if( scopeObj instanceof ICFBamSecUserObj ) {
+				refUser = (ICFBamSecUserObj) scopeObj;
+				editBuff.setRequiredContainerUser( refUser );
+			}
+			else {
+				throw new CFLibUnsupportedClassException( getClass(),
+					S_ProcName,
+					"scopeObj",
+					scopeObj,
+					"ICFBamSecUserObj" );
 			}
 
 			ICFBamSecUserPasswordObj origSecUserPassword;

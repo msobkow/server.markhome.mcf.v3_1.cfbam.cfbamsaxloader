@@ -2308,6 +2308,23 @@ public class CFBamSaxLdr
 				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
 			}
 		}
+		else if( tableName.equals( "SecUserEMConf" ) ) {
+			if( tableOption.equals( "*" ) ) {
+				// Leave at default
+			}
+			else if( tableOption.equals( "Insert" ) ) {
+				loader.setSecUserEMConfLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Insert );
+			}
+			else if( tableOption.equals( "Update" ) ) {
+				loader.setSecUserEMConfLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Update );
+			}
+			else if( tableOption.equals( "Replace" ) ) {
+				loader.setSecUserEMConfLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
+			}
+			else {
+				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
+			}
+		}
 		else if( tableName.equals( "SecUserPWHistory" ) ) {
 			if( tableOption.equals( "*" ) ) {
 				// Leave at default
@@ -2320,6 +2337,23 @@ public class CFBamSaxLdr
 			}
 			else if( tableOption.equals( "Replace" ) ) {
 				loader.setSecUserPWHistoryLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
+			}
+			else {
+				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
+			}
+		}
+		else if( tableName.equals( "SecUserPWReset" ) ) {
+			if( tableOption.equals( "*" ) ) {
+				// Leave at default
+			}
+			else if( tableOption.equals( "Insert" ) ) {
+				loader.setSecUserPWResetLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Insert );
+			}
+			else if( tableOption.equals( "Update" ) ) {
+				loader.setSecUserPWResetLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Update );
+			}
+			else if( tableOption.equals( "Replace" ) ) {
+				loader.setSecUserPWResetLoaderBehaviour( CFBamSaxLoader.LoaderBehaviourEnum.Replace );
 			}
 			else {
 				throw new RuntimeException( S_ProcName + "ERROR: Expected segment to comprise <TableName>={*|Insert|Update|Replace}" );
