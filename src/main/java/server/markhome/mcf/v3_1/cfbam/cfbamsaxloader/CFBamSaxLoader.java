@@ -1232,6 +1232,9 @@ public class CFBamSaxLoader
 	protected CFBamSaxLoaderSecUser getSecUserHandler() {
 		if( secUserHandler == null ) {
 			secUserHandler = new CFBamSaxLoaderSecUser( this );
+			secUserHandler.addElementHandler( "SecUserPassword", getSecUserPasswordHandler() );
+			secUserHandler.addElementHandler( "SecUserEMConf", getSecUserEMConfHandler() );
+			secUserHandler.addElementHandler( "SecUserPWReset", getSecUserPWResetHandler() );
 		}
 		return( secUserHandler );
 	}
