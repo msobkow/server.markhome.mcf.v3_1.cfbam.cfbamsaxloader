@@ -91,6 +91,7 @@ public class CFBamSaxLoaderTweak
 		String attrTenantId = null;
 		String attrDefSchemaTenantId = null;
 		String attrName = null;
+		String attrReplacesInherited = null;
 		String attrTweakGelText = null;
 		String attrDefSchema = null;
 		// Tweak References
@@ -164,6 +165,15 @@ public class CFBamSaxLoaderTweak
 					}
 					attrName = attrs.getValue( idxAttr );
 				}
+				else if( attrLocalName.equals( "ReplacesInherited" ) ) {
+					if( attrReplacesInherited != null ) {
+						throw new CFLibUniqueIndexViolationException( getClass(),
+							S_ProcName,
+							S_LocalName,
+							attrLocalName );
+					}
+					attrReplacesInherited = attrs.getValue( idxAttr );
+				}
 				else if( attrLocalName.equals( "TweakGelText" ) ) {
 					if( attrTweakGelText != null ) {
 						throw new CFLibUniqueIndexViolationException( getClass(),
@@ -206,6 +216,12 @@ public class CFBamSaxLoaderTweak
 					0,
 					"Name" );
 			}
+			if( ( attrReplacesInherited == null ) || ( attrReplacesInherited.length() <= 0 ) ) {
+				throw new CFLibNullArgumentException( getClass(),
+					S_ProcName,
+					0,
+					"ReplacesInherited" );
+			}
 			if( attrTweakGelText == null ) {
 				throw new CFLibNullArgumentException( getClass(),
 					S_ProcName,
@@ -219,6 +235,7 @@ public class CFBamSaxLoaderTweak
 			curContext.putNamedValue( "TenantId", attrTenantId );
 			curContext.putNamedValue( "DefSchemaTenantId", attrDefSchemaTenantId );
 			curContext.putNamedValue( "Name", attrName );
+			curContext.putNamedValue( "ReplacesInherited", attrReplacesInherited );
 			curContext.putNamedValue( "TweakGelText", attrTweakGelText );
 			curContext.putNamedValue( "DefSchema", attrDefSchema );
 
@@ -265,6 +282,21 @@ public class CFBamSaxLoaderTweak
 
 			String natName = attrName;
 			editBuff.setRequiredName( natName );
+
+			boolean natReplacesInherited;
+			if( attrReplacesInherited.equals( "true" ) || attrReplacesInherited.equals( "yes" ) || attrReplacesInherited.equals( "1" ) ) {
+				natReplacesInherited = true;
+			}
+			else if( attrReplacesInherited.equals( "false" ) || attrReplacesInherited.equals( "no" ) || attrReplacesInherited.equals( "0" ) ) {
+				natReplacesInherited = false;
+			}
+			else {
+				throw new CFLibUsageException( getClass(),
+					S_ProcName,
+					String.format(Inz.x("cflib.xml.CFLibXmlUtil.XmlBooleanInvalid"), "ReplacesInherited", attrReplacesInherited),
+					String.format(Inz.s("cflib.xml.CFLibXmlUtil.XmlBooleanInvalid"), "ReplacesInherited", attrReplacesInherited));
+			}
+			editBuff.setRequiredReplacesInherited( natReplacesInherited );
 
 			String natTweakGelText = attrTweakGelText;
 			editBuff.setRequiredTweakGelText( natTweakGelText );
@@ -332,6 +364,7 @@ public class CFBamSaxLoaderTweak
 						editTweak.setRequiredTenantId( editBuff.getRequiredTenantId() );
 						editTweak.setOptionalDefSchemaTenantId( editBuff.getOptionalDefSchemaTenantId() );
 						editTweak.setRequiredName( editBuff.getRequiredName() );
+						editTweak.setRequiredReplacesInherited( editBuff.getRequiredReplacesInherited() );
 						editTweak.setRequiredTweakGelText( editBuff.getRequiredTweakGelText() );
 						editTweak.setOptionalLookupDefSchema( editBuff.getOptionalLookupDefSchema() );
 						break;
