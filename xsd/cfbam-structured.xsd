@@ -1668,6 +1668,20 @@
 	<xsd:restriction base="xsd:integer"/>
 </xsd:simpleType>
 
+<xsd:simpleType name="IndexTweakIdType">
+	<xsd:restriction base="TweakIdGenType">
+	</xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="IndexTweakIndexIdType">
+	<xsd:restriction base="ScopeIdGenType">
+	</xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="IndexTweakRevisionType">
+	<xsd:restriction base="xsd:integer"/>
+</xsd:simpleType>
+
 <xsd:simpleType name="Int16ColIdType">
 	<xsd:restriction base="ValueIdGenType">
 	</xsd:restriction>
@@ -4611,6 +4625,12 @@
 	<xsd:attribute name="Id" type="IndexColIdType" use="required"/>
 </xsd:complexType>
 
+<xsd:complexType name="IndexTweakIdIdxType" mixed="true">
+	<xsd:sequence>
+	</xsd:sequence>
+	<xsd:attribute name="Id" type="IndexTweakIdType" use="required"/>
+</xsd:complexType>
+
 <xsd:complexType name="Int16ColIdIdxType" mixed="true">
 	<xsd:sequence>
 	</xsd:sequence>
@@ -5796,6 +5816,7 @@
 			<xsd:sequence>
 				<xsd:choice minOccurs="0" maxOccurs="unbounded">
 					<xsd:element name="IndexCol" type="IndexColObjType" />
+					<xsd:element name="IndexTweak" type="IndexTweakObjType" />
 				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="Name" type="IndexNameType" use="required"/>
@@ -6127,6 +6148,17 @@
 </xsd:complexType>
 
 <xsd:complexType name="SchemaTweakObjType" mixed="true">
+	<xsd:complexContent>
+		<xsd:extension base="TweakObjType">
+			<xsd:sequence>
+				<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				</xsd:choice>
+			</xsd:sequence>
+		</xsd:extension>
+	</xsd:complexContent>
+</xsd:complexType>
+
+<xsd:complexType name="IndexTweakObjType" mixed="true">
 	<xsd:complexContent>
 		<xsd:extension base="TweakObjType">
 			<xsd:sequence>

@@ -190,6 +190,7 @@ public class CFBamSaxLoader
 	private LoaderBehaviourEnum id64GenLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum indexLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum indexColLoaderBehaviour = LoaderBehaviourEnum.Update;
+	private LoaderBehaviourEnum indexTweakLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum int16ColLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum int16DefLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum int16TypeLoaderBehaviour = LoaderBehaviourEnum.Update;
@@ -380,6 +381,7 @@ public class CFBamSaxLoader
 	private CFBamSaxLoaderId64Gen id64GenHandler = null;
 	private CFBamSaxLoaderIndex indexHandler = null;
 	private CFBamSaxLoaderIndexCol indexColHandler = null;
+	private CFBamSaxLoaderIndexTweak indexTweakHandler = null;
 	private CFBamSaxLoaderInt16Col int16ColHandler = null;
 	private CFBamSaxLoaderInt16Def int16DefHandler = null;
 	private CFBamSaxLoaderInt16Type int16TypeHandler = null;
@@ -904,6 +906,7 @@ public class CFBamSaxLoader
 		if( indexHandler == null ) {
 			indexHandler = new CFBamSaxLoaderIndex( this );
 			indexHandler.addElementHandler( "IndexCol", getIndexColHandler() );
+			indexHandler.addElementHandler( "IndexTweak", getIndexTweakHandler() );
 		}
 		return( indexHandler );
 	}
@@ -912,6 +915,12 @@ public class CFBamSaxLoader
 			indexColHandler = new CFBamSaxLoaderIndexCol( this );
 		}
 		return( indexColHandler );
+	}
+	protected CFBamSaxLoaderIndexTweak getIndexTweakHandler() {
+		if( indexTweakHandler == null ) {
+			indexTweakHandler = new CFBamSaxLoaderIndexTweak( this );
+		}
+		return( indexTweakHandler );
 	}
 	protected CFBamSaxLoaderInt16Col getInt16ColHandler() {
 		if( int16ColHandler == null ) {
@@ -2277,6 +2286,14 @@ public class CFBamSaxLoader
 
 	public void setIndexColLoaderBehaviour( LoaderBehaviourEnum value ) {
 		indexColLoaderBehaviour = value;
+	}
+
+	public LoaderBehaviourEnum getIndexTweakLoaderBehaviour() {
+		return( indexTweakLoaderBehaviour );
+	}
+
+	public void setIndexTweakLoaderBehaviour( LoaderBehaviourEnum value ) {
+		indexTweakLoaderBehaviour = value;
 	}
 
 	public LoaderBehaviourEnum getInt16ColLoaderBehaviour() {
