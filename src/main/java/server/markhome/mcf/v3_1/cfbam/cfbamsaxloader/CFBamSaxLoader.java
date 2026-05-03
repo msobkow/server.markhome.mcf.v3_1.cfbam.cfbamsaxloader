@@ -221,8 +221,10 @@ public class CFBamSaxLoader
 	private LoaderBehaviourEnum popTopDepLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum relationLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum relationColLoaderBehaviour = LoaderBehaviourEnum.Update;
+	private LoaderBehaviourEnum roleDefLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum schemaDefLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum schemaRefLoaderBehaviour = LoaderBehaviourEnum.Insert;
+	private LoaderBehaviourEnum schemaRoleLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum schemaTweakLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum scopeLoaderBehaviour = LoaderBehaviourEnum.Update;
 	private LoaderBehaviourEnum secClusGrpLoaderBehaviour = LoaderBehaviourEnum.Insert;
@@ -419,8 +421,10 @@ public class CFBamSaxLoader
 	private CFBamSaxLoaderPopTopDep popTopDepHandler = null;
 	private CFBamSaxLoaderRelation relationHandler = null;
 	private CFBamSaxLoaderRelationCol relationColHandler = null;
+	private CFBamSaxLoaderRoleDef roleDefHandler = null;
 	private CFBamSaxLoaderSchemaDef schemaDefHandler = null;
 	private CFBamSaxLoaderSchemaRef schemaRefHandler = null;
+	private CFBamSaxLoaderSchemaRole schemaRoleHandler = null;
 	private CFBamSaxLoaderSchemaTweak schemaTweakHandler = null;
 	private CFBamSaxLoaderScope scopeHandler = null;
 	private CFBamSaxLoaderSecClusGrp secClusGrpHandler = null;
@@ -1123,6 +1127,12 @@ public class CFBamSaxLoader
 		}
 		return( relationColHandler );
 	}
+	protected CFBamSaxLoaderRoleDef getRoleDefHandler() {
+		if( roleDefHandler == null ) {
+			roleDefHandler = new CFBamSaxLoaderRoleDef( this );
+		}
+		return( roleDefHandler );
+	}
 	protected CFBamSaxLoaderSchemaDef getSchemaDefHandler() {
 		if( schemaDefHandler == null ) {
 			schemaDefHandler = new CFBamSaxLoaderSchemaDef( this );
@@ -1171,6 +1181,7 @@ public class CFBamSaxLoader
 			schemaDefHandler.addElementHandler( "Uuid6Gen", getUuid6GenHandler() );
 			schemaDefHandler.addElementHandler( "SchemaRef", getSchemaRefHandler() );
 			schemaDefHandler.addElementHandler( "SchemaTweak", getSchemaTweakHandler() );
+			schemaDefHandler.addElementHandler( "SchemaRole", getSchemaRoleHandler() );
 		}
 		return( schemaDefHandler );
 	}
@@ -1179,6 +1190,12 @@ public class CFBamSaxLoader
 			schemaRefHandler = new CFBamSaxLoaderSchemaRef( this );
 		}
 		return( schemaRefHandler );
+	}
+	protected CFBamSaxLoaderSchemaRole getSchemaRoleHandler() {
+		if( schemaRoleHandler == null ) {
+			schemaRoleHandler = new CFBamSaxLoaderSchemaRole( this );
+		}
+		return( schemaRoleHandler );
 	}
 	protected CFBamSaxLoaderSchemaTweak getSchemaTweakHandler() {
 		if( schemaTweakHandler == null ) {
@@ -2595,6 +2612,14 @@ public class CFBamSaxLoader
 		relationColLoaderBehaviour = value;
 	}
 
+	public LoaderBehaviourEnum getRoleDefLoaderBehaviour() {
+		return( roleDefLoaderBehaviour );
+	}
+
+	public void setRoleDefLoaderBehaviour( LoaderBehaviourEnum value ) {
+		roleDefLoaderBehaviour = value;
+	}
+
 	public LoaderBehaviourEnum getSchemaDefLoaderBehaviour() {
 		return( schemaDefLoaderBehaviour );
 	}
@@ -2609,6 +2634,14 @@ public class CFBamSaxLoader
 
 	public void setSchemaRefLoaderBehaviour( LoaderBehaviourEnum value ) {
 		schemaRefLoaderBehaviour = value;
+	}
+
+	public LoaderBehaviourEnum getSchemaRoleLoaderBehaviour() {
+		return( schemaRoleLoaderBehaviour );
+	}
+
+	public void setSchemaRoleLoaderBehaviour( LoaderBehaviourEnum value ) {
+		schemaRoleLoaderBehaviour = value;
 	}
 
 	public LoaderBehaviourEnum getSchemaTweakLoaderBehaviour() {
